@@ -2,8 +2,8 @@
 
 namespace Star\Component\Specification\Result;
 
-use Star\Component\Specification\Adapter\NativePHP\CallableConstraintBuilder;
 use Star\Component\Specification\Datasource;
+use Star\Component\Specification\Platform\InMemoryPlatform;
 use Star\Component\Specification\Specification;
 use Star\Component\Type\Value;
 use function array_key_exists;
@@ -23,26 +23,26 @@ final class ArrayResult implements ResultSet, Datasource
 
     public function fetchAll(Specification $specification): ResultSet
     {
-        $builder = new CallableConstraintBuilder();
-        $specification->applySpecification($builder);
+        $platform = new InMemoryPlatform();
+        $specification->applySpecification($platform);
 
-        return $builder->executeFetchAll(...$this->rows);
+        return $platform->executeFetchAll(...$this->rows);
     }
 
     public function fetchOne(Specification $specification): ResultRow
     {
-        $builder = new CallableConstraintBuilder();
-        $specification->applySpecification($builder);
+        $platform = new InMemoryPlatform();
+        $specification->applySpecification($platform);
 
-        return $builder->executeFetchOne(...$this->rows);
+        return $platform->executeFetchOne(...$this->rows);
     }
 
     public function exists(Specification $specification): bool
     {
-        $builder = new CallableConstraintBuilder();
-        $specification->applySpecification($builder);
+        $platform = new InMemoryPlatform();
+        $specification->applySpecification($platform);
 
-        return $builder->executeExists(...$this->rows);
+        return $platform->executeExists(...$this->rows);
     }
 
     public function count(): int
@@ -73,7 +73,7 @@ final class ArrayResult implements ResultSet, Datasource
      * @param mixed[] ...$rows
      * @return static
      */
-    public static function fromArray(array ...$rows): ResultSet
+    public static function fromRowsOfMixed(array ...$rows): ResultSet
     {
         return self::fromRows(
             ...array_map(

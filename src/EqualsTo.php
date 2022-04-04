@@ -25,9 +25,9 @@ final class EqualsTo implements Specification
         $this->value = $value;
     }
 
-    public function applySpecification(SpecificationBuilder $adapter): void
+    public function applySpecification(SpecificationPlatform $platform): void
     {
-        $adapter->applyEquals($this->alias, $this->property, $this->value);
+        $platform->applyEquals($this->alias, $this->property, $this->value);
     }
 
     /**

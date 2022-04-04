@@ -4,5 +4,5 @@ namespace Star\Component\Specification;
 
 interface Specification
 {
-    public function applySpecification(SpecificationBuilder $adapter): void;
+    public function applySpecification(SpecificationPlatform $platform): void;
 }

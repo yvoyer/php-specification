@@ -13,7 +13,7 @@ final class ArrayResultTest extends TestCase
 {
     private function createResultSet(): ArrayResult
     {
-        return ArrayResult::fromArray(
+        return ArrayResult::fromRowsOfMixed(
             [
                 'int' => 1,
                 'int-string' => 1,
@@ -45,7 +45,7 @@ final class ArrayResultTest extends TestCase
 
     private function createFixtureForFiltering(): ArrayResult
     {
-        return ArrayResult::fromArray(
+        return ArrayResult::fromRowsOfMixed(
             [
                 'id' => 2,
                 'name' => 'Joe',
@@ -115,7 +115,7 @@ final class ArrayResultTest extends TestCase
         $this->expectExceptionMessage(
             'Value of type "array" is not supported yet.'
         );
-        ArrayResult::fromArray(
+        ArrayResult::fromRowsOfMixed(
             [
                 [],
             ]
@@ -128,7 +128,7 @@ final class ArrayResultTest extends TestCase
         $this->expectExceptionMessage(
             'Row must be given a string index as column identifier, got "integer".'
         );
-        ArrayResult::fromArray(
+        ArrayResult::fromRowsOfMixed(
             [
                 123 => $this->createMock(Value::class),
             ]
@@ -144,7 +144,7 @@ final class ArrayResultTest extends TestCase
 
     public function test_it_should_return_empty_value_when_column_not_found(): void
     {
-        $result = ArrayResult::fromArray();
+        $result = ArrayResult::fromRowsOfMixed();
         self::assertTrue($result->getValue(0, 'not-found')->isEmpty());
     }
 
