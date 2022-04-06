@@ -13,6 +13,9 @@ use Star\Component\Type\Value;
 use function array_filter;
 use function array_merge;
 use function count;
+use function mb_stripos;
+use function mb_strlen;
+use function mb_strpos;
 use function sprintf;
 
 final class InMemoryPlatform implements SpecificationPlatform
@@ -57,6 +60,49 @@ final class InMemoryPlatform implements SpecificationPlatform
             }
 
             return false;
+        };
+    }
+
+    public function applyContains(string $alias, string $property, Value $value, bool $caseSensitive): void
+    {
+        $stringValue = $value->toString();
+        $this->constraints[] = function (ResultRow $row) use ($property, $stringValue, $caseSensitive): bool {
+            $propertyValue = $row->getValue($property)->toString();
+
+            if ($caseSensitive) {
+                return false !== mb_strpos($propertyValue, $stringValue);
+            }
+
+            return false !== mb_stripos($propertyValue, $stringValue);
+        };
+    }
+
+    public function applyEndsWith(string $alias, string $property, Value $value, bool $caseSensitive): void
+    {
+        $stringValue = $value->toString();
+        $this->constraints[] = function (ResultRow $row) use ($property, $stringValue, $caseSensitive): bool {
+            $propertyValue = $row->getValue($property)->toString();
+            $expectedPosition = mb_strlen($propertyValue) - mb_strlen($stringValue);
+
+            if ($caseSensitive) {
+                return $expectedPosition === mb_strpos($propertyValue, $stringValue);
+            }
+
+            return $expectedPosition === mb_stripos($propertyValue, $stringValue);
+        };
+    }
+
+    public function applyStartsWith(string $alias, string $property, Value $value, bool $caseSensitive): void
+    {
+        $stringValue = $value->toString();
+        $this->constraints[] = function (ResultRow $row) use ($property, $stringValue, $caseSensitive): bool {
+            $propertyValue = $row->getValue($property)->toString();
+
+            if ($caseSensitive) {
+                return 0 === mb_strpos($propertyValue, $stringValue);
+            }
+
+            return 0 === mb_stripos($propertyValue, $stringValue);
         };
     }
 
