@@ -9,8 +9,7 @@ final class ContainsTest extends TestCase
 {
     public function test_it_should_support_like_matching_exact_string(): void
     {
-        $datasource = StarWarsCharacters::createResultSet();
-        $result = $datasource->fetchAll(Contains::caseSensitiveString('alias', 'faction', 'E')); // From Empire
+        $result = StarWarsCharacters::fetchAll(Contains::caseSensitiveString('alias', 'faction', 'E')); // From Empire
 
         self::assertCount(2, $result);
         self::assertSame(StarWarsCharacters::ID_PALPATINE, $result->getValue(0, 'id')->toInteger());
@@ -19,8 +18,7 @@ final class ContainsTest extends TestCase
 
     public function test_it_should_support_like_matching_case_insensitive_string(): void
     {
-        $datasource = StarWarsCharacters::createResultSet();
-        $result = $datasource->fetchAll(Contains::caseInsensitiveString('alias', 'faction', 'tH')); // The Empire / The Rebel Alliance
+        $result = StarWarsCharacters::fetchAll(Contains::caseInsensitiveString('alias', 'faction', 'tH')); // The Empire / The Rebel Alliance
 
         self::assertCount(4, $result);
         self::assertSame(StarWarsCharacters::ID_PALPATINE, $result->getValue(0, 'id')->toInteger());

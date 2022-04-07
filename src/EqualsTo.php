@@ -6,25 +6,10 @@ use Star\Component\Type\BooleanValue;
 use Star\Component\Type\FloatValue;
 use Star\Component\Type\IntegerValue;
 use Star\Component\Type\StringValue;
-use Star\Component\Type\Value;
 use Star\Component\Type\ValueGuesser;
 
-final class EqualsTo implements Specification
+final class EqualsTo extends SpecificationWithProperty
 {
-    private string $alias;
-    private string $property;
-    private Value $value;
-
-    private function __construct(
-        string $alias,
-        string $property,
-        Value $value
-    ) {
-        $this->alias = $alias;
-        $this->property = $property;
-        $this->value = $value;
-    }
-
     public function applySpecification(SpecificationPlatform $platform): void
     {
         $platform->applyEquals($this->alias, $this->property, $this->value);

@@ -49,6 +49,38 @@ interface SpecificationPlatform
      * @param string $alias
      * @param string $property
      * @param Value $value
+     * @return void
+     */
+    public function applyGreater(string $alias, string $property, Value $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param Value $value
+     * @return void
+     */
+    public function applyGreaterEquals(string $alias, string $property, Value $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param Value $value
+     * @return void
+     */
+    public function applyLower(string $alias, string $property, Value $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param Value $value
+     * @return void
+     */
+    public function applyLowerEquals(string $alias, string $property, Value $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param Value $value
      * @param bool $caseSensitive Whether to compare in a case-sensitive manner
      * @return void
      */
