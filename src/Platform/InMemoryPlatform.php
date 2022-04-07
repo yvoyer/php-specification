@@ -92,6 +92,38 @@ final class InMemoryPlatform implements SpecificationPlatform
         };
     }
 
+    public function applyGreater(string $alias, string $property, Value $value): void
+    {
+        $floatValue = $value->toFloat();
+        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
+            return $row->getValue($property)->toFloat() > $floatValue;
+        };
+    }
+
+    public function applyGreaterEquals(string $alias, string $property, Value $value): void
+    {
+        $floatValue = $value->toFloat();
+        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
+            return $row->getValue($property)->toFloat() >= $floatValue;
+        };
+    }
+
+    public function applyLower(string $alias, string $property, Value $value): void
+    {
+        $floatValue = $value->toFloat();
+        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
+            return $row->getValue($property)->toFloat() < $floatValue;
+        };
+    }
+
+    public function applyLowerEquals(string $alias, string $property, Value $value): void
+    {
+        $floatValue = $value->toFloat();
+        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
+            return $row->getValue($property)->toFloat() <= $floatValue;
+        };
+    }
+
     public function applyStartsWith(string $alias, string $property, Value $value, bool $caseSensitive): void
     {
         $stringValue = $value->toString();

@@ -100,11 +100,41 @@ echo $result->exists(EqualsTo::fromString('alias', 'name', 'Not found')); // fal
 
 ### EqualsTo
 
-The equals to specification will return items matching exactly the value `===`. 
+Whether the property's value is matching exactly the provided value (`===`). 
 
 Example: `EqualsTo::fromString('alias', 'name', 'Joe')`
 
 **Note**: Both values will be converted to a string in order to assert the equality.
+
+### Greater
+
+Whether the property's numeric value is greater than the provided value.
+
+Example: `GreaterEquals::thanInteger('alias', 'age', 18)`
+
+### GreaterEquals
+
+Whether the property's numeric value is greater or equal than the provided value.
+
+Example: `GreaterEquals::thanInteger('alias', 'age', 18)`
+
+### Lower
+
+Whether the property's numeric value is less than the provided value.
+
+Example: `Lower::thanInteger('alias', 'age', 18)`
+
+### LowerEquals
+
+Whether the property's numeric value is less or equal than the provided value.
+
+Example: `LowerEquals::thanInteger('alias', 'age', 18)`
+
+### Between
+
+Whether the property's numeric value is included between the left and right values.
+
+Example: `Between::integers('alias', 'age', 18, 40)`
 
 ### StartsWith
 

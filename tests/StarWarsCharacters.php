@@ -4,6 +4,9 @@ namespace Star\Component\Specification\Tests;
 
 use Star\Component\Specification\Datasource;
 use Star\Component\Specification\Result\ArrayResult;
+use Star\Component\Specification\Result\ResultRow;
+use Star\Component\Specification\Result\ResultSet;
+use Star\Component\Specification\Specification;
 
 final class StarWarsCharacters
 {
@@ -14,7 +17,7 @@ final class StarWarsCharacters
     const ID_BOBA = 5;
     const ID_JANGO = 6;
 
-    public static function createResultSet(): Datasource
+    private static function createResultSet(): Datasource
     {
         return ArrayResult::fromRowsOfMixed(
             [
@@ -60,7 +63,7 @@ final class StarWarsCharacters
                 'is_sith_lord' => false,
                 'is_rebel' => false,
                 'faction' => 'Crime Syndicate',
-                'total_kills' => 12,
+                'total_kills' => 69,
             ],
             [
                 'id' => self::ID_JANGO,
@@ -72,5 +75,20 @@ final class StarWarsCharacters
                 'total_kills' => 72,
             ],
         );
+    }
+
+    public static function fetchAll(Specification $specification): ResultSet
+    {
+        return self::createResultSet()->fetchAll($specification);
+    }
+
+    public static function fetchOne(Specification $specification): ResultRow
+    {
+        return self::createResultSet()->fetchOne($specification);
+    }
+
+    public static function exists(Specification $specification): bool
+    {
+        return self::createResultSet()->exists($specification);
     }
 }

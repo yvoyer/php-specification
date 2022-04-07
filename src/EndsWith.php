@@ -5,11 +5,8 @@ namespace Star\Component\Specification;
 use Star\Component\Type\StringValue;
 use Star\Component\Type\Value;
 
-final class EndsWith implements Specification
+final class EndsWith extends SpecificationWithProperty
 {
-    private string $alias;
-    private string $property;
-    private Value $value;
     private bool $caseSensitive;
 
     private function __construct(
@@ -18,9 +15,7 @@ final class EndsWith implements Specification
         Value $value,
         bool $caseSensitive
     ) {
-        $this->alias = $alias;
-        $this->property = $property;
-        $this->value = $value;
+        parent::__construct($alias, $property, $value);
         $this->caseSensitive = $caseSensitive;
     }
 
