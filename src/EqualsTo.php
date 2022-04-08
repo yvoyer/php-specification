@@ -21,27 +21,27 @@ final class EqualsTo extends SpecificationWithProperty
      * @param mixed $value
      * @return Specification
      */
-    public static function fromMixed(string $alias, string $property, $value): Specification
+    public static function mixedValue(string $alias, string $property, $value): Specification
     {
         return new self($alias, $property, ValueGuesser::fromMixed($value));
     }
 
-    public static function fromInteger(string $alias, string $property, int $value): Specification
+    public static function integerValue(string $alias, string $property, int $value): Specification
     {
         return new self($alias, $property, IntegerValue::fromInteger($value));
     }
 
-    public static function fromFloat(string $alias, string $property, float $value): Specification
+    public static function floatValue(string $alias, string $property, float $value): Specification
     {
         return new self($alias, $property, FloatValue::fromFloat($value));
     }
 
-    public static function fromBoolean(string $alias, string $property, bool $value): Specification
+    public static function booleanValue(string $alias, string $property, bool $value): Specification
     {
         return new self($alias, $property, BooleanValue::fromBoolean($value));
     }
 
-    public static function fromString(string $alias, string $property, string $value): Specification
+    public static function stringValue(string $alias, string $property, string $value): Specification
     {
         return new self($alias, $property, StringValue::fromString($value));
     }

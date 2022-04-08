@@ -70,6 +70,15 @@ final class ArrayResult implements ResultSet, Datasource
     }
 
     /**
+     * @param callable $callback
+     * @return mixed[]
+     */
+    public function map(callable $callback): array
+    {
+        return array_map($callback, $this->rows);
+    }
+
+    /**
      * @param mixed[] ...$rows
      * @return static
      */

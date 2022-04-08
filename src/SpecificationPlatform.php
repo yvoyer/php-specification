@@ -108,6 +108,20 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
+     * @return void
+     */
+    public function applyOrderAsc(string $alias, string $property): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @return void
+     */
+    public function applyOrderDesc(string $alias, string $property): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
      * @param Value $value
      * @param bool $caseSensitive Whether to compare in a case-sensitive manner
      * @return void

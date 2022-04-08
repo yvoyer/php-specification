@@ -36,8 +36,8 @@ final class AndXTest extends TestCase
         );
         $result = $data->fetchAll(
             new AndX(
-                EqualsTo::fromBoolean('alias', 'active', true),
-                EqualsTo::fromInteger('alias', 'age', 18)
+                EqualsTo::booleanValue('alias', 'active', true),
+                EqualsTo::integerValue('alias', 'age', 18)
             )
         );
 
@@ -87,12 +87,12 @@ final class AndXTest extends TestCase
         );
         $result = $data->fetchAll(
             new AndX(
-                EqualsTo::fromBoolean('alias', 'active', true), // exclude 3
+                EqualsTo::booleanValue('alias', 'active', true), // exclude 3
                 new AndX(
-                    EqualsTo::fromInteger('alias', 'age', 18), // exclude 5
+                    EqualsTo::integerValue('alias', 'age', 18), // exclude 5
                     new AndX(
-                        EqualsTo::fromString('alias', 'name', 'Joe'), // exclude 2
-                        EqualsTo::fromInteger('alias', 'id', 6)
+                        EqualsTo::stringValue('alias', 'name', 'Joe'), // exclude 2
+                        EqualsTo::integerValue('alias', 'id', 6)
                     )
                 )
             )

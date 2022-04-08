@@ -64,7 +64,7 @@ $data = [
     ],
 ];
 $result = ArrayResult::fromRowsOfMixed(...$data);
-$row = $result->fetchOne(EqualsTo::fromBoolean('alias', 'active', false));
+$row = $result->fetchOne(EqualsTo::booleanValue('alias', 'active', false));
 echo $row->count(); // 1
 echo $row->getValue('name')->toInteger(); // Joe
 ```
@@ -92,8 +92,8 @@ $data = [
     ],
 ];
 $result = ArrayResult::fromRowsOfMixed(...$data);
-echo $result->exists(EqualsTo::fromString('alias', 'name', 'Joe')); // true
-echo $result->exists(EqualsTo::fromString('alias', 'name', 'Not found')); // false
+echo $result->exists(EqualsTo::stringValue('alias', 'name', 'Joe')); // true
+echo $result->exists(EqualsTo::stringValue('alias', 'name', 'Not found')); // false
 ```
 
 ## Supported specifications
@@ -102,7 +102,7 @@ echo $result->exists(EqualsTo::fromString('alias', 'name', 'Not found')); // fal
 
 Whether the property's value is matching exactly the provided value (`===`). 
 
-Example: `EqualsTo::fromString('alias', 'name', 'Joe')`
+Example: `EqualsTo::stringValue('alias', 'name', 'Joe')`
 
 **Note**: Both values will be converted to a string in order to assert the equality.
 
@@ -191,14 +191,33 @@ Example:
 ```php
 // equivalent to "name = 'Joe' AND active = true"
 new AndX(
-    EqualsTo::fromString('alias', 'name', 'Joe')
-    EqualsTo::fromBoolean('alias', 'active', true)
+    EqualsTo::stringValue('alias', 'name', 'Joe')
+    EqualsTo::booleanValue('alias', 'active', true)
 );
 
 // equivalent to "name = 'Joe' OR active = true"
 new OrX(
-    EqualsTo::fromString('alias', 'name', 'Joe')
-    EqualsTo::fromBoolean('alias', 'active', true)
+    EqualsTo::stringValue('alias', 'name', 'Joe')
+    EqualsTo::booleanValue('alias', 'active', true)
+);
+```
+
+## Ordering by properties
+
+We can also order our specifications with 1 or more properties.
+
+Example:
+
+```php
+new AndX(
+    OrderBy::desc('alias', 'is_active'),
+    OrderBy::asc('alias', 'age'),
+    OrderBy::desc('alias', 'name'),
+);
+new OrX(
+    OrderBy::desc('alias', 'is_active'),
+    OrderBy::asc('alias', 'age'),
+    OrderBy::desc('alias', 'name'),
 );
 ```
 

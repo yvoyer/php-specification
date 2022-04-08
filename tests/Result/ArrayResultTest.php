@@ -68,7 +68,7 @@ final class ArrayResultTest extends TestCase
     {
         $data = $this->createFixtureForFiltering();
         $result = $data->fetchAll(
-            EqualsTo::fromInteger('alias', 'id', 9)
+            EqualsTo::integerValue('alias', 'id', 9)
         );
 
         self::assertCount(1, $result);
@@ -79,7 +79,7 @@ final class ArrayResultTest extends TestCase
     {
         $data = $this->createFixtureForFiltering();
         $row = $data->fetchOne(
-            EqualsTo::fromInteger('alias', 'id', 9)
+            EqualsTo::integerValue('alias', 'id', 9)
         );
 
         self::assertFalse($row->isEmpty());
@@ -90,7 +90,7 @@ final class ArrayResultTest extends TestCase
     {
         $data = $this->createFixtureForFiltering();
         $row = $data->fetchOne(
-            EqualsTo::fromInteger('alias', 'id', 42)
+            EqualsTo::integerValue('alias', 'id', 42)
         );
 
         self::assertTrue($row->isEmpty());
@@ -102,10 +102,10 @@ final class ArrayResultTest extends TestCase
         $data = $this->createFixtureForFiltering();
 
         self::assertTrue(
-            $data->exists(EqualsTo::fromInteger('alias', 'id', 9))
+            $data->exists(EqualsTo::integerValue('alias', 'id', 9))
         );
         self::assertFalse(
-            $data->exists(EqualsTo::fromInteger('alias', 'id', 42))
+            $data->exists(EqualsTo::integerValue('alias', 'id', 42))
         );
     }
 
@@ -154,6 +154,6 @@ final class ArrayResultTest extends TestCase
 
         $this->expectException(NotUniqueResult::class);
         $this->expectExceptionMessage('Query was expected to return 0-1 row, "2" rows returned.');
-        $result->fetchOne(EqualsTo::fromBoolean('alias', 'is_active', true));
+        $result->fetchOne(EqualsTo::booleanValue('alias', 'is_active', true));
     }
 }

@@ -26,6 +26,6 @@ final class IsNullTest extends TestCase
 
     public function test_false_should_not_be_considered_null(): void
     {
-        self::assertFalse(StarWarsCharacters::exists(new IsNull('alias', 'is_rebel')));
+        self::assertFalse(StarWarsCharacters::exists(new IsNull('alias', 'is_force_sensitive')));
     }
 }
