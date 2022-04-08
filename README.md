@@ -106,6 +106,24 @@ Example: `EqualsTo::fromString('alias', 'name', 'Joe')`
 
 **Note**: Both values will be converted to a string in order to assert the equality.
 
+### Between
+
+Whether the property's numeric value is included between the left and right values.
+
+Example: `Between::integers('alias', 'age', 18, 40)`
+
+### Contains
+
+Whether the provided value is found at any position of the item's property (start, end, middle).
+
+Example: `Contains::caseSensitiveString('alias', 'name', 'Joe')`
+
+### EndsWith
+
+Whether the provided value is found at the end of the item's property.
+
+Example: `EndsWith::caseInsensitiveString('alias', 'name', 'Joe')`
+
 ### Greater
 
 Whether the property's numeric value is greater than the provided value.
@@ -117,6 +135,34 @@ Example: `GreaterEquals::thanInteger('alias', 'age', 18)`
 Whether the property's numeric value is greater or equal than the provided value.
 
 Example: `GreaterEquals::thanInteger('alias', 'age', 18)`
+
+### InArray
+
+Whether the property's value is contained in the range of provided values.
+
+Example: `InArray::ofIntegers('alias', 'age', 18, 20, 34)` would return items with age 18, 20 or 34.
+
+### IsEmpty
+
+Whether the property's value is an empty value.
+
+Example: `new IsEmpty('alias', 'name')`
+
+**Note**: Zero, boolean false are not considered empty.
+
+### IsNot
+
+Inverse the provided specification.
+
+Example: `new IsNot(Lower::thanInteger('alias', 'age', 18))` would return items with age >= 19.
+
+### IsNull
+
+Whether the property's value is a null value.
+
+Example: `new IsNull('alias', 'age')`
+
+**Note**: Zero, boolean false and empty string are not considered null.
 
 ### Lower
 
@@ -130,29 +176,11 @@ Whether the property's numeric value is less or equal than the provided value.
 
 Example: `LowerEquals::thanInteger('alias', 'age', 18)`
 
-### Between
-
-Whether the property's numeric value is included between the left and right values.
-
-Example: `Between::integers('alias', 'age', 18, 40)`
-
 ### StartsWith
 
 Whether the provided value is found at the beginning of the item's property.
 
 Example: `StartsWith::caseSensitiveString('alias', 'name', 'Joe')`
-
-### EndsWith
-
-Whether the provided value is found at the end of the item's property.
-
-Example: `EndsWith::caseInsensitiveString('alias', 'name', 'Joe')`
-
-### Contains
-
-Whether the provided value is found at any position of the item's property (start, end, middle).
-
-Example: `Contains::caseSensitiveString('alias', 'name', 'Joe')`
 
 ### Composites (And / Or)
 

@@ -9,10 +9,13 @@ use Star\Component\Specification\Result\ResultRow;
 use Star\Component\Specification\Result\ResultSet;
 use Star\Component\Specification\Specification;
 use Star\Component\Specification\SpecificationPlatform;
+use Star\Component\Type\NullValue;
 use Star\Component\Type\Value;
 use function array_filter;
+use function array_map;
 use function array_merge;
 use function count;
+use function in_array;
 use function mb_stripos;
 use function mb_strlen;
 use function mb_strpos;
@@ -108,6 +111,34 @@ final class InMemoryPlatform implements SpecificationPlatform
         };
     }
 
+    public function applyIn(string $alias, string $property, Value ...$values): void
+    {
+        $stringValues = array_map(
+            function (Value $value): string {
+                return $value->toString();
+            },
+            $values
+        );
+
+        $this->constraints[] = function (ResultRow $row) use ($property, $stringValues): bool {
+            return in_array($row->getValue($property)->toString(), $stringValues, true);
+        };
+    }
+
+    public function applyIsNull(string $alias, string $property): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property): bool {
+            return $row->getValue($property) instanceof NullValue;
+        };
+    }
+
+    public function applyIsEmpty(string $alias, string $property): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property): bool {
+            return $row->getValue($property)->isEmpty();
+        };
+    }
+
     public function applyLower(string $alias, string $property, Value $value): void
     {
         $floatValue = $value->toFloat();
@@ -121,6 +152,24 @@ final class InMemoryPlatform implements SpecificationPlatform
         $floatValue = $value->toFloat();
         $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
             return $row->getValue($property)->toFloat() <= $floatValue;
+        };
+    }
+
+    public function applyNot(Specification $specification): void
+    {
+        $collector = new InMemoryPlatform();
+        $specification->applySpecification($collector);
+        $constraints = $collector->constraints;
+
+        $this->constraints[] = function (ResultRow $row) use ($constraints): bool {
+            $return = true;
+            foreach ($constraints as $constraint) {
+                if ($constraint($row)) {
+                    $return = false;
+                }
+            }
+
+            return $return;
         };
     }
 

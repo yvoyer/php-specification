@@ -64,6 +64,28 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
+     * @param Value ...$values
+     * @return void
+     */
+    public function applyIn(string $alias, string $property, Value ...$values): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @return void
+     */
+    public function applyIsNull(string $alias, string $property): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @return void
+     */
+    public function applyIsEmpty(string $alias, string $property): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
      * @param Value $value
      * @return void
      */
@@ -76,6 +98,12 @@ interface SpecificationPlatform
      * @return void
      */
     public function applyLowerEquals(string $alias, string $property, Value $value): void;
+
+    /**
+     * @param Specification $specification
+     * @return void
+     */
+    public function applyNot(Specification $specification): void;
 
     /**
      * @param string $alias

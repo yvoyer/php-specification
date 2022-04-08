@@ -11,19 +11,21 @@ final class ContainsTest extends TestCase
     {
         $result = StarWarsCharacters::fetchAll(Contains::caseSensitiveString('alias', 'faction', 'E')); // From Empire
 
-        self::assertCount(2, $result);
+        self::assertCount(3, $result);
         self::assertSame(StarWarsCharacters::ID_PALPATINE, $result->getValue(0, 'id')->toInteger());
         self::assertSame(StarWarsCharacters::ID_VADER, $result->getValue(1, 'id')->toInteger());
+        self::assertSame(StarWarsCharacters::ID_STORMTROOPER, $result->getValue(2, 'id')->toInteger());
     }
 
     public function test_it_should_support_like_matching_case_insensitive_string(): void
     {
         $result = StarWarsCharacters::fetchAll(Contains::caseInsensitiveString('alias', 'faction', 'tH')); // The Empire / The Rebel Alliance
 
-        self::assertCount(4, $result);
+        self::assertCount(5, $result);
         self::assertSame(StarWarsCharacters::ID_PALPATINE, $result->getValue(0, 'id')->toInteger());
         self::assertSame(StarWarsCharacters::ID_VADER, $result->getValue(1, 'id')->toInteger());
         self::assertSame(StarWarsCharacters::ID_LEIA, $result->getValue(2, 'id')->toInteger());
         self::assertSame(StarWarsCharacters::ID_LUKE, $result->getValue(3, 'id')->toInteger());
+        self::assertSame(StarWarsCharacters::ID_STORMTROOPER, $result->getValue(4, 'id')->toInteger());
     }
 }
