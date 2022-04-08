@@ -6,7 +6,6 @@ use Star\Component\Specification\AndX;
 use Star\Component\Specification\Between;
 use Star\Component\Specification\Contains;
 use Star\Component\Specification\EqualsTo;
-use Star\Component\Specification\Greater;
 use Star\Component\Specification\IsNot;
 use PHPUnit\Framework\TestCase;
 use Star\Component\Specification\OrX;
@@ -15,7 +14,7 @@ final class IsNotTest extends TestCase
 {
     public function test_it_should_inverse_the_given_specification(): void
     {
-        $wrapped = EqualsTo::fromInteger('alias', 'id', 1);
+        $wrapped = EqualsTo::integerValue('alias', 'id', 1);
 
         self::assertCount(1, StarWarsCharacters::fetchAll($wrapped));
         self::assertCount(
@@ -30,7 +29,7 @@ final class IsNotTest extends TestCase
             Contains::caseInsensitiveString('alias', 'name', 'leia'),
             Contains::caseInsensitiveString('alias', 'name', 'luke'),
             new AndX( // vader ony
-                EqualsTo::fromBoolean('alias', 'is_sith_lord', true),
+                EqualsTo::booleanValue('alias', 'is_sith_lord', true),
                 Between::integers('alias', 'total_kills', 30, 60)
             )
         );

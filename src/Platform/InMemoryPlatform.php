@@ -20,6 +20,7 @@ use function mb_stripos;
 use function mb_strlen;
 use function mb_strpos;
 use function sprintf;
+use function usort;
 
 final class InMemoryPlatform implements SpecificationPlatform
 {
@@ -27,6 +28,11 @@ final class InMemoryPlatform implements SpecificationPlatform
      * @var callable[]
      */
     private array $constraints = [];
+
+    /**
+     * @var string[] The direction to sort indexed by properties.
+     */
+    private array $sorters = [];
 
     public function applyAndX(Specification $first, Specification $second, Specification ...$others): void
     {
@@ -45,6 +51,7 @@ final class InMemoryPlatform implements SpecificationPlatform
 
             return true;
         };
+        $this->sorters = array_merge($this->sorters, $collector->sorters);
     }
 
     public function applyOrX(Specification $first, Specification $second, Specification ...$others): void
@@ -64,6 +71,7 @@ final class InMemoryPlatform implements SpecificationPlatform
 
             return false;
         };
+        $this->sorters = array_merge($this->sorters, $collector->sorters);
     }
 
     public function applyContains(string $alias, string $property, Value $value, bool $caseSensitive): void
@@ -173,6 +181,16 @@ final class InMemoryPlatform implements SpecificationPlatform
         };
     }
 
+    public function applyOrderAsc(string $alias, string $property): void
+    {
+        $this->sorters[$property] = 'ASC';
+    }
+
+    public function applyOrderDesc(string $alias, string $property): void
+    {
+        $this->sorters[$property] = 'DESC';
+    }
+
     public function applyStartsWith(string $alias, string $property, Value $value, bool $caseSensitive): void
     {
         $stringValue = $value->toString();
@@ -204,6 +222,34 @@ final class InMemoryPlatform implements SpecificationPlatform
         $result = $data;
         foreach ($this->constraints as $callable) {
             $result = array_filter($result, $callable);
+        }
+
+        if (count($this->sorters) > 0) {
+            usort(
+                $result,
+                function (ResultRow $left, ResultRow $right): int {
+                    $return = 1;
+
+                    // weight each property
+                    $weight = pow(10, count($this->sorters));
+                    foreach ($this->sorters as $property => $direction) {
+                        $leftValue = $left->getValue($property)->toString();
+                        $rightValue = $right->getValue($property)->toString();
+
+                        if ($direction === 'ASC') {
+                            $return += ($leftValue <=> $rightValue) * $weight;
+                        }
+
+                        if ($direction === 'DESC') {
+                            $return -= ($leftValue <=> $rightValue) * $weight;
+                        }
+
+                        $weight /= 10;
+                    }
+
+                    return $return;
+                }
+            );
         }
 
         return ArrayResult::fromRows(...$result);

@@ -35,8 +35,8 @@ final class OrXTest extends TestCase
         );
         $result = $data->fetchAll(
             new OrX(
-                EqualsTo::fromBoolean('alias', 'active', true),
-                EqualsTo::fromInteger('alias', 'age', 18)
+                EqualsTo::booleanValue('alias', 'active', true),
+                EqualsTo::integerValue('alias', 'age', 18)
             )
         );
 
@@ -82,12 +82,12 @@ final class OrXTest extends TestCase
         );
         $result = $data->fetchAll(
             new OrX(
-                EqualsTo::fromString('alias', 'name', 'Object 2'),
+                EqualsTo::stringValue('alias', 'name', 'Object 2'),
                 new OrX(
-                    EqualsTo::fromString('alias', 'name', 'Object 1'),
+                    EqualsTo::stringValue('alias', 'name', 'Object 1'),
                     new OrX(
-                        EqualsTo::fromBoolean('alias', 'active', false),
-                        EqualsTo::fromInteger('alias', 'age', 18),
+                        EqualsTo::booleanValue('alias', 'active', false),
+                        EqualsTo::integerValue('alias', 'age', 18),
                     )
                 )
             )
