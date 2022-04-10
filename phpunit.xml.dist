@@ -6,7 +6,6 @@
     executionOrder="default"
     forceCoversAnnotation="false"
     beStrictAboutCoversAnnotation="false"
-    beStrictAboutOutputDuringTests="true"
     beStrictAboutTodoAnnotatedTests="true"
     convertDeprecationsToExceptions="true"
     failOnRisky="true"

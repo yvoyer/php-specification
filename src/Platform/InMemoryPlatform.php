@@ -10,15 +10,12 @@ use Star\Component\Specification\Result\ResultSet;
 use Star\Component\Specification\Specification;
 use Star\Component\Specification\SpecificationPlatform;
 use Star\Component\Type\NullValue;
-use Star\Component\Type\Value;
 use function array_filter;
-use function array_map;
 use function array_merge;
 use function count;
 use function in_array;
 use function mb_stripos;
 use function mb_strlen;
-use function mb_strpos;
 use function sprintf;
 use function usort;
 
@@ -74,62 +71,83 @@ final class InMemoryPlatform implements SpecificationPlatform
         $this->sorters = array_merge($this->sorters, $collector->sorters);
     }
 
-    public function applyContains(string $alias, string $property, Value $value, bool $caseSensitive): void
+    public function applyContains(string $alias, string $property, string $value): void
     {
-        $stringValue = $value->toString();
-        $this->constraints[] = function (ResultRow $row) use ($property, $stringValue, $caseSensitive): bool {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return false !== mb_stripos($row->getValue($property)->toString(), $value);
+        };
+    }
+
+    public function applyEndsWith(string $alias, string $property, string $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
             $propertyValue = $row->getValue($property)->toString();
+            $expectedPosition = mb_strlen($propertyValue) - mb_strlen($value);
 
-            if ($caseSensitive) {
-                return false !== mb_strpos($propertyValue, $stringValue);
-            }
-
-            return false !== mb_stripos($propertyValue, $stringValue);
+            return $expectedPosition === mb_stripos($propertyValue, $value);
         };
     }
 
-    public function applyEndsWith(string $alias, string $property, Value $value, bool $caseSensitive): void
+    public function applyEqualsString(string $alias, string $property, string $value): void
     {
-        $stringValue = $value->toString();
-        $this->constraints[] = function (ResultRow $row) use ($property, $stringValue, $caseSensitive): bool {
-            $propertyValue = $row->getValue($property)->toString();
-            $expectedPosition = mb_strlen($propertyValue) - mb_strlen($stringValue);
-
-            if ($caseSensitive) {
-                return $expectedPosition === mb_strpos($propertyValue, $stringValue);
-            }
-
-            return $expectedPosition === mb_stripos($propertyValue, $stringValue);
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $value === $row->getValue($property)->toString();
         };
     }
 
-    public function applyGreater(string $alias, string $property, Value $value): void
+    public function applyEqualsInteger(string $alias, string $property, int $value): void
     {
-        $floatValue = $value->toFloat();
-        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
-            return $row->getValue($property)->toFloat() > $floatValue;
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $value === $row->getValue($property)->toInteger();
         };
     }
 
-    public function applyGreaterEquals(string $alias, string $property, Value $value): void
+    public function applyEqualsFloat(string $alias, string $property, float $value): void
     {
-        $floatValue = $value->toFloat();
-        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
-            return $row->getValue($property)->toFloat() >= $floatValue;
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $value === $row->getValue($property)->toFloat();
         };
     }
 
-    public function applyIn(string $alias, string $property, Value ...$values): void
+    public function applyEqualsBoolean(string $alias, string $property, bool $value): void
     {
-        $stringValues = array_map(
-            function (Value $value): string {
-                return $value->toString();
-            },
-            $values
-        );
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $value === $row->getValue($property)->toBool();
+        };
+    }
 
-        $this->constraints[] = function (ResultRow $row) use ($property, $stringValues): bool {
-            return in_array($row->getValue($property)->toString(), $stringValues, true);
+    public function applyGreater(string $alias, string $property, float $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $row->getValue($property)->toFloat() > $value;
+        };
+    }
+
+    public function applyGreaterEquals(string $alias, string $property, float $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $row->getValue($property)->toFloat() >= $value;
+        };
+    }
+
+    public function applyInStrings(string $alias, string $property, string ...$values): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $values): bool {
+            return in_array($row->getValue($property)->toString(), $values, true);
+        };
+    }
+
+    public function applyInIntegers(string $alias, string $property, int ...$values): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $values): bool {
+            return in_array($row->getValue($property)->toInteger(), $values, true);
+        };
+    }
+
+    public function applyInFloats(string $alias, string $property, float ...$values): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $values): bool {
+            return in_array($row->getValue($property)->toFloat(), $values, true);
         };
     }
 
@@ -143,23 +161,21 @@ final class InMemoryPlatform implements SpecificationPlatform
     public function applyIsEmpty(string $alias, string $property): void
     {
         $this->constraints[] = function (ResultRow $row) use ($property): bool {
-            return $row->getValue($property)->isEmpty();
+            return mb_strlen($row->getValue($property)->toString()) === 0;
         };
     }
 
-    public function applyLower(string $alias, string $property, Value $value): void
+    public function applyLower(string $alias, string $property, float $value): void
     {
-        $floatValue = $value->toFloat();
-        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
-            return $row->getValue($property)->toFloat() < $floatValue;
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $row->getValue($property)->toFloat() < $value;
         };
     }
 
-    public function applyLowerEquals(string $alias, string $property, Value $value): void
+    public function applyLowerEquals(string $alias, string $property, float $value): void
     {
-        $floatValue = $value->toFloat();
-        $this->constraints[] = function (ResultRow $row) use ($property, $floatValue): bool {
-            return $row->getValue($property)->toFloat() <= $floatValue;
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            return $row->getValue($property)->toFloat() <= $value;
         };
     }
 
@@ -191,24 +207,10 @@ final class InMemoryPlatform implements SpecificationPlatform
         $this->sorters[$property] = 'DESC';
     }
 
-    public function applyStartsWith(string $alias, string $property, Value $value, bool $caseSensitive): void
-    {
-        $stringValue = $value->toString();
-        $this->constraints[] = function (ResultRow $row) use ($property, $stringValue, $caseSensitive): bool {
-            $propertyValue = $row->getValue($property)->toString();
-
-            if ($caseSensitive) {
-                return 0 === mb_strpos($propertyValue, $stringValue);
-            }
-
-            return 0 === mb_stripos($propertyValue, $stringValue);
-        };
-    }
-
-    public function applyEquals(string $alias, string $property, Value $value): void
+    public function applyStartsWith(string $alias, string $property, string $value): void
     {
         $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
-            return $value->toString() === $row->getValue($property)->toString();
+            return 0 === mb_stripos($row->getValue($property)->toString(), $value);
         };
     }
 

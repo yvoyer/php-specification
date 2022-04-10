@@ -26,8 +26,8 @@ final class IsNotTest extends TestCase
     public function test_it_should_inverse_complex_specification(): void
     {
         $wrapped = new OrX( // Skywalker family
-            Contains::caseInsensitiveString('alias', 'name', 'leia'),
-            Contains::caseInsensitiveString('alias', 'name', 'luke'),
+            Contains::string('alias', 'name', 'leia'),
+            Contains::string('alias', 'name', 'luke'),
             new AndX( // vader ony
                 EqualsTo::booleanValue('alias', 'is_sith_lord', true),
                 Between::integers('alias', 'total_kills', 30, 60)
