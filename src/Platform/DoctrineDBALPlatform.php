@@ -3,10 +3,13 @@
 namespace Star\Component\Specification\Platform;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Star\Component\Specification\Datasource;
 use Star\Component\Specification\Result\ArrayResult;
+use Star\Component\Specification\Result\ArrayRow;
+use Star\Component\Specification\Result\EmptyRow;
 use Star\Component\Specification\Result\ResultRow;
 use Star\Component\Specification\Result\ResultSet;
 use Star\Component\Specification\Specification;
@@ -23,7 +26,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
     private QueryBuilder $builder;
 
     /**
-     * @var string[]
+     * @var string[]|CompositeExpression[]
      */
     private array $constraints = [];
 
@@ -54,7 +57,12 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function fetchOne(Specification $specification): ResultRow
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        $result = $this->buildQuery($specification)->fetchAssociative();
+        if (!$result) {
+            return new EmptyRow();
+        }
+
+        return ArrayRow::fromMixedMap($result);
     }
 
     public function exists(Specification $specification): bool
@@ -66,54 +74,12 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function applyAndX(Specification $first, Specification $second, Specification ...$others): void
     {
-        $collector = $this->createCollector();
-        $specifications = array_merge([$first, $second], $others);
-
-        foreach ($specifications as $specification) {
-            $specification->applySpecification($collector);
-        }
-
-        $constraints = $collector->constraints;
-        if (count($constraints) > 0) {
-            $this->constraints[] = $this->builder->expr()->and(...$constraints);
-        }
-
-        foreach ($collector->builder->getParameters() as $parameter => $value) {
-            $this->builder->setParameter($parameter, $value);
-        }
-        $this->parameterCount = $collector->parameterCount;
-
-        $orders = $collector->builder->getQueryPart('orderBy');
-        foreach ($orders as $order) {
-            $parts = explode(' ', $order);
-            $this->builder->addOrderBy($parts[0], $parts[1]);
-        }
+        $this->applyComposite('AND', ...array_merge([$first, $second], $others));
     }
 
     public function applyOrX(Specification $first, Specification $second, Specification ...$others): void
     {
-        $collector = $this->createCollector();
-        $specifications = array_merge([$first, $second], $others);
-
-        foreach ($specifications as $specification) {
-            $specification->applySpecification($collector);
-        }
-
-        $constraints = $collector->constraints;
-        if (count($constraints) > 0) {
-            $this->constraints[] = $this->builder->expr()->or(...$constraints);
-        }
-
-        foreach ($collector->builder->getParameters() as $parameter => $value) {
-            $this->builder->setParameter($parameter, $value);
-        }
-        $this->parameterCount = $collector->parameterCount;
-
-        $orders = $collector->builder->getQueryPart('orderBy');
-        foreach ($orders as $order) {
-            $parts = explode(' ', $order);
-            $this->builder->addOrderBy($parts[0], $parts[1]);
-        }
+        $this->applyComposite('OR', ...array_merge([$first, $second], $others));
     }
 
     public function applyContains(string $alias, string $property, string $value): void
@@ -292,7 +258,8 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $this->builder->setParameter($parameter, $value . '%');
     }
 
-    private function generateParameter(string $property): string {
+    private function generateParameter(string $property): string
+    {
         $this->parameterCount ++;
 
         return $property . '_' . $this->parameterCount;
@@ -310,5 +277,37 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         }
 
         return $this->builder->executeQuery();
+    }
+
+    private function applyComposite(string $type, Specification ...$specifications): void
+    {
+        $collector = $this->createCollector();
+
+        foreach ($specifications as $specification) {
+            $specification->applySpecification($collector);
+        }
+
+        $constraints = $collector->constraints;
+        if (count($constraints) > 0) {
+            if ($type === 'AND') {
+                $this->constraints[] = $this->builder->expr()->and(...$constraints);
+            } else {
+                $this->constraints[] = $this->builder->expr()->or(...$constraints);
+            }
+        }
+
+        foreach ($collector->builder->getParameters() as $parameter => $value) {
+            $this->builder->setParameter($parameter, $value);
+        }
+        $this->parameterCount = $collector->parameterCount;
+
+        /**
+         * @var string[] $orders
+         */
+        $orders = $collector->builder->getQueryPart('orderBy');
+        foreach ($orders as $order) {
+            $parts = explode(' ', $order);
+            $this->builder->addOrderBy($parts[0], $parts[1]);
+        }
     }
 }

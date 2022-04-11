@@ -382,7 +382,7 @@ final class DoctrineDBALTest extends TestCase
             ->select('*')
             ->from(self::TABLE_AUTHOR, 'a');
         $platform = new DoctrineDBALPlatform($qb);
-        $result = $platform->fetchAll(new IsNot(new IsEmpty('a', 'active', true)));
+        $result = $platform->fetchAll(new IsNot(new IsEmpty('a', 'active')));
 
         self::assertCount(3, $result);
         self::assertSame(self::JK, $result->getValue(0, 'id')->toInteger());
@@ -491,5 +491,29 @@ final class DoctrineDBALTest extends TestCase
         self::assertSame(9, $result->getValue(5, 'id')->toInteger()); // 3
         self::assertSame(10, $result->getValue(6, 'id')->toInteger()); // 4
         self::assertSame(14, $result->getValue(7, 'id')->toInteger()); // 2
+    }
+
+    public function test_should_fetch_one(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchOne(EqualsTo::integerValue('a', 'id', 3));
+        self::assertSame(self::JK, $row->getValue('id')->toInteger());
+    }
+
+    public function test_should_fetch_empty_row(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchOne(EqualsTo::integerValue('a', 'id', 999));
+        self::assertTrue($row->isEmpty());
     }
 }
