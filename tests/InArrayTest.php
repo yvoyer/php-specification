@@ -9,7 +9,7 @@ final class InArrayTest extends TestCase
 {
     public function test_it_should_return_items_with_integer(): void
     {
-        $result = StarWarsCharacters::fetchAll(InArray::ofIntegers('alias', 'salary', 15000, 5000));
+        $result = StarWarsCharacters::fetchAll(InArray::ofIntegers('alias', 'id', 5, 6));
 
         self::assertCount(2, $result);
         self::assertSame(StarWarsCharacters::ID_BOBA, $result->getValue(0, 'id')->toInteger());

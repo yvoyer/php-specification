@@ -116,13 +116,13 @@ Example: `Between::integers('alias', 'age', 18, 40)`
 
 Whether the provided value is found at any position of the item's property (start, end, middle).
 
-Example: `Contains::caseSensitiveString('alias', 'name', 'Joe')`
+Example: `Contains::string('alias', 'name', 'Joe')`
 
 ### EndsWith
 
 Whether the provided value is found at the end of the item's property.
 
-Example: `EndsWith::caseInsensitiveString('alias', 'name', 'Joe')`
+Example: `EndsWith::string('alias', 'name', 'Joe')`
 
 ### Greater
 
@@ -148,7 +148,7 @@ Whether the property's value is an empty value.
 
 Example: `new IsEmpty('alias', 'name')`
 
-**Note**: Zero, boolean false are not considered empty.
+**Note**: Zero, boolean false are considered empty.
 
 ### IsNot
 
@@ -180,7 +180,7 @@ Example: `LowerEquals::thanInteger('alias', 'age', 18)`
 
 Whether the provided value is found at the beginning of the item's property.
 
-Example: `StartsWith::caseSensitiveString('alias', 'name', 'Joe')`
+Example: `StartsWith::string('alias', 'name', 'Joe')`
 
 ### Composites (And / Or)
 
@@ -224,5 +224,5 @@ new OrX(
 ## Supported frameworks
 
 * [PHP in memory array](src/Platform/InMemoryPlatform.php) using [ResultSet](src/Result/ResultSet.php) implementations.
-* Doctrine DBAL (TODO)
+* [Doctrine DBAL](src/Platform/DoctrineDBALPlatform.php)
 * Doctrine ORM (TODO)

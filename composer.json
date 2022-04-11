@@ -10,6 +10,7 @@
         "star/php-type": "dev-main"
     },
     "require-dev": {
+        "doctrine/dbal": "^3.3",
         "phpstan/phpstan": "^1.0",
         "phpstan/phpstan-phpunit": "^1.1",
         "phpunit/phpunit": "^9.5",

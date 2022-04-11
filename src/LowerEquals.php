@@ -9,7 +9,7 @@ final class LowerEquals extends SpecificationWithProperty
 {
     public function applySpecification(SpecificationPlatform $platform): void
     {
-        $platform->applyLowerEquals($this->alias, $this->property, $this->value);
+        $platform->applyLowerEquals($this->alias, $this->property, $this->value->toFloat());
     }
 
     public static function thanInteger(string $alias, string $property, int $value): Specification
@@ -21,5 +21,4 @@ final class LowerEquals extends SpecificationWithProperty
     {
         return new self($alias, $property, FloatValue::fromFloat($value));
     }
-    // todo thanDate()
 }

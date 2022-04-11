@@ -10,7 +10,7 @@ final class EndsWithTest extends TestCase
 {
     public function test_it_should_return_items_ending_with_case_sensitive_string(): void
     {
-        $result = StarWarsCharacters::fetchAll(EndsWith::caseSensitiveString('alias', 'name', 'Skywalker'));
+        $result = StarWarsCharacters::fetchAll(EndsWith::string('alias', 'name', 'Skywalker'));
 
         self::assertCount(2, $result);
         self::assertSame(StarWarsCharacters::ID_VADER, $result->getValue(0, 'id')->toInteger());
@@ -19,7 +19,7 @@ final class EndsWithTest extends TestCase
 
     public function test_it_should_return_items_ending_with_case_insensitive_string(): void
     {
-        $result = StarWarsCharacters::fetchAll(EndsWith::caseInsensitiveString('alias', 'name', 'FetT'));
+        $result = StarWarsCharacters::fetchAll(EndsWith::string('alias', 'name', 'FetT'));
 
         self::assertCount(2, $result);
         self::assertSame(StarWarsCharacters::ID_BOBA, $result->getValue(0, 'id')->toInteger());

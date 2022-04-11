@@ -2,8 +2,6 @@
 
 namespace Star\Component\Specification;
 
-use Star\Component\Type\Value;
-
 interface SpecificationPlatform
 {
     /**
@@ -25,49 +23,90 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
-     * @param bool $caseSensitive Whether to compare in a case-sensitive manner
+     * @param string $value
      * @return void
      */
-    public function applyContains(
-        string $alias,
-        string $property,
-        Value $value,
-        bool $caseSensitive
-    ): void;
+    public function applyContains(string $alias, string $property, string $value): void;
 
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
-     * @param bool $caseSensitive Whether to compare in a case-sensitive manner
+     * @param string $value
      * @return void
      */
-    public function applyEndsWith(string $alias, string $property, Value $value, bool $caseSensitive): void;
+    public function applyEndsWith(string $alias, string $property, string $value): void;
 
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
+     * @param string $value
      * @return void
      */
-    public function applyGreater(string $alias, string $property, Value $value): void;
+    public function applyEqualsString(string $alias, string $property, string $value): void;
 
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
+     * @param int $value
      * @return void
      */
-    public function applyGreaterEquals(string $alias, string $property, Value $value): void;
+    public function applyEqualsInteger(string $alias, string $property, int $value): void;
 
     /**
      * @param string $alias
      * @param string $property
-     * @param Value ...$values
+     * @param float $value
      * @return void
      */
-    public function applyIn(string $alias, string $property, Value ...$values): void;
+    public function applyEqualsFloat(string $alias, string $property, float $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param bool $value
+     * @return void
+     */
+    public function applyEqualsBoolean(string $alias, string $property, bool $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param float $value
+     * @return void
+     */
+    public function applyGreater(string $alias, string $property, float $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param float $value
+     * @return void
+     */
+    public function applyGreaterEquals(string $alias, string $property, float $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param string ...$values
+     * @return void
+     */
+    public function applyInStrings(string $alias, string $property, string ...$values): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param int ...$values
+     * @return void
+     */
+    public function applyInIntegers(string $alias, string $property, int ...$values): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param float ...$values
+     * @return void
+     */
+    public function applyInFloats(string $alias, string $property, float ...$values): void;
 
     /**
      * @param string $alias
@@ -86,18 +125,18 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
+     * @param float $value
      * @return void
      */
-    public function applyLower(string $alias, string $property, Value $value): void;
+    public function applyLower(string $alias, string $property, float $value): void;
 
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
+     * @param float $value
      * @return void
      */
-    public function applyLowerEquals(string $alias, string $property, Value $value): void;
+    public function applyLowerEquals(string $alias, string $property, float $value): void;
 
     /**
      * @param Specification $specification
@@ -122,19 +161,8 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
-     * @param Value $value
-     * @param bool $caseSensitive Whether to compare in a case-sensitive manner
+     * @param string $value
      * @return void
      */
-    public function applyStartsWith(string $alias, string $property, Value $value, bool $caseSensitive): void;
-
-    /**
-     * Equals to the same scalar|bool value
-     *
-     * @param string $alias
-     * @param string $property
-     * @param Value $value
-     * @return void
-     */
-    public function applyEquals(string $alias, string $property, Value $value): void;
+    public function applyStartsWith(string $alias, string $property, string $value): void;
 }
