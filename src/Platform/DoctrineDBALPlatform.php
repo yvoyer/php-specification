@@ -4,6 +4,7 @@ namespace Star\Component\Specification\Platform;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Result;
 use Star\Component\Specification\Datasource;
 use Star\Component\Specification\Result\ArrayResult;
 use Star\Component\Specification\Result\ResultRow;
@@ -12,6 +13,8 @@ use Star\Component\Specification\Specification;
 use Star\Component\Specification\SpecificationPlatform;
 use function array_merge;
 use function count;
+use function explode;
+use function implode;
 use function sprintf;
 use function var_dump;
 
@@ -44,17 +47,8 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function fetchAll(Specification $specification): ResultSet
     {
-        $specification->applySpecification($this);
-        if (count($this->constraints) > 0) {
-            $this->builder->where(...$this->constraints);
-        }
-
-        if ($this->debug) {
-            var_dump($this->builder->getSQL(), $this->builder->getParameters());
-        }
-
         return ArrayResult::fromRowsOfMixed(
-            ...$this->builder->executeQuery()->fetchAllAssociative()
+            ...$this->buildQuery($specification)->fetchAllAssociative()
         );
     }
 
@@ -65,17 +59,9 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function exists(Specification $specification): bool
     {
-        $specification->applySpecification($this);
         $this->builder->select('COUNT(*)');
-        if (count($this->constraints) > 0) {
-            $this->builder->where(...$this->constraints);
-        }
 
-        if ($this->debug) {
-            var_dump($this->builder->getSQL(), $this->builder->getParameters());
-        }
-
-        return (bool) $this->builder->executeQuery()->fetchOne();
+        return (bool) $this->buildQuery($specification)->fetchOne();
     }
 
     public function applyAndX(Specification $first, Specification $second, Specification ...$others): void
@@ -87,11 +73,21 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
             $specification->applySpecification($collector);
         }
 
-        $this->constraints[] = $this->builder->expr()->and(...$collector->constraints);
+        $constraints = $collector->constraints;
+        if (count($constraints) > 0) {
+            $this->constraints[] = $this->builder->expr()->and(...$constraints);
+        }
+
         foreach ($collector->builder->getParameters() as $parameter => $value) {
             $this->builder->setParameter($parameter, $value);
         }
         $this->parameterCount = $collector->parameterCount;
+
+        $orders = $collector->builder->getQueryPart('orderBy');
+        foreach ($orders as $order) {
+            $parts = explode(' ', $order);
+            $this->builder->addOrderBy($parts[0], $parts[1]);
+        }
     }
 
     public function applyOrX(Specification $first, Specification $second, Specification ...$others): void
@@ -103,11 +99,21 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
             $specification->applySpecification($collector);
         }
 
-        $this->constraints[] = $this->builder->expr()->or(...$collector->constraints);
+        $constraints = $collector->constraints;
+        if (count($constraints) > 0) {
+            $this->constraints[] = $this->builder->expr()->or(...$constraints);
+        }
+
         foreach ($collector->builder->getParameters() as $parameter => $value) {
             $this->builder->setParameter($parameter, $value);
         }
         $this->parameterCount = $collector->parameterCount;
+
+        $orders = $collector->builder->getQueryPart('orderBy');
+        foreach ($orders as $order) {
+            $parts = explode(' ', $order);
+            $this->builder->addOrderBy($parts[0], $parts[1]);
+        }
     }
 
     public function applyContains(string $alias, string $property, string $value): void
@@ -256,7 +262,14 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function applyNot(Specification $specification): void
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        $collector = $this->createCollector();
+        $specification->applySpecification($collector);
+
+        $this->constraints[] = sprintf('NOT (%s)', implode(' ', $collector->constraints));
+        foreach ($collector->builder->getParameters() as $parameter => $value) {
+            $this->builder->setParameter($parameter, $value);
+        }
+        $this->parameterCount = $collector->parameterCount;
     }
 
     public function applyOrderAsc(string $alias, string $property): void
@@ -283,5 +296,19 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $this->parameterCount ++;
 
         return $property . '_' . $this->parameterCount;
+    }
+
+    private function buildQuery(Specification $specification): Result
+    {
+        $specification->applySpecification($this);
+        if (count($this->constraints) > 0) {
+            $this->builder->where(...$this->constraints);
+        }
+
+        if ($this->debug) {
+            var_dump($this->builder->getSQL(), $this->builder->getParameters());
+        }
+
+        return $this->builder->executeQuery();
     }
 }

@@ -35,6 +35,9 @@ final class DoctrineDBALTest extends TestCase
     const JK = 3;
     const ROBERT = 4;
     const KING = 5;
+
+    const MAX_POST_COUNT = 14;
+
     private Connection $connection;
 
     protected function setUp(): void
@@ -89,7 +92,7 @@ final class DoctrineDBALTest extends TestCase
         $this->createPost(11, 'Harry Potter 1', true, 2.0, self::JK, null);
         $this->createPost(12, 'Two towers', true, 2.0, self::TOLKIEN, null);
         $this->createPost(13, 'Harry Potter 3', true, 1.0, self::JK, null);
-        $this->createPost(14, 'Return of the king', true, 1.0, self::TOLKIEN, null);
+        $this->createPost(self::MAX_POST_COUNT, 'Return of the king', true, 1.0, self::TOLKIEN, null);
     }
 
     private function createAuthor(
@@ -385,7 +388,6 @@ final class DoctrineDBALTest extends TestCase
         self::assertSame(self::JK, $result->getValue(0, 'id')->toInteger());
         self::assertSame(self::ROBERT, $result->getValue(1, 'id')->toInteger());
         self::assertSame(self::KING, $result->getValue(2, 'id')->toInteger());
-        $this->fail('todo');
     }
 
     public function test_it_should_support_single_order_by(): void
@@ -414,22 +416,24 @@ final class DoctrineDBALTest extends TestCase
         $qb = $this->connection->createQueryBuilder();
         $qb
             ->select('*')
-            ->from(self::TABLE_POST, 'p');
+            ->from(self::TABLE_AUTHOR, 'a');
         $platform = new DoctrineDBALPlatform($qb);
         $result = $platform->fetchAll(
             new AndX(
-                OrderBy::desc('p', 'version'),
-                OrderBy::asc('a', 'published'),
-                OrderBy::desc('a', 'name'),
+                OrderBy::desc('a', 'active'),
+                new OrX(
+                    OrderBy::desc('a', 'registered_at'),
+                    OrderBy::desc('a', 'name'),
+                ),
             )
         );
 
-        var_dump($result);
-        self::assertCount(3, $result);
-        self::assertSame(self::JK, $result->getValue(0, 'id')->toInteger());
-        self::assertSame(self::ROBERT, $result->getValue(1, 'id')->toInteger());
-        self::assertSame(self::KING, $result->getValue(2, 'id')->toInteger());
-        $this->fail('todo');
+        self::assertCount(5, $result);
+        self::assertSame(2, $result->getValue(0, 'id')->toInteger());
+        self::assertSame(1, $result->getValue(1, 'id')->toInteger());
+        self::assertSame(4, $result->getValue(2, 'id')->toInteger());
+        self::assertSame(5, $result->getValue(3, 'id')->toInteger());
+        self::assertSame(3, $result->getValue(4, 'id')->toInteger());
     }
 
     public function test_it_should_support_and(): void
