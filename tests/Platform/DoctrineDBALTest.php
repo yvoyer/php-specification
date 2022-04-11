@@ -492,4 +492,16 @@ final class DoctrineDBALTest extends TestCase
         self::assertSame(10, $result->getValue(6, 'id')->toInteger()); // 4
         self::assertSame(14, $result->getValue(7, 'id')->toInteger()); // 2
     }
+
+    public function test_fetch_one(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchOne(EqualsTo::integerValue('a', 'id', 3));
+        self::assertSame(self::JK, $row->getValue('id') ->toInteger());
+    }
 }

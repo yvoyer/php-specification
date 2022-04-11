@@ -7,6 +7,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Result;
 use Star\Component\Specification\Datasource;
 use Star\Component\Specification\Result\ArrayResult;
+use Star\Component\Specification\Result\ArrayRow;
 use Star\Component\Specification\Result\ResultRow;
 use Star\Component\Specification\Result\ResultSet;
 use Star\Component\Specification\Specification;
@@ -54,7 +55,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function fetchOne(Specification $specification): ResultRow
     {
-        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+        return ArrayRow::fromMixedMap($this->buildQuery($specification)->fetchAssociative());
     }
 
     public function exists(Specification $specification): bool
@@ -292,7 +293,8 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $this->builder->setParameter($parameter, $value . '%');
     }
 
-    private function generateParameter(string $property): string {
+    private function generateParameter(string $property): string
+    {
         $this->parameterCount ++;
 
         return $property . '_' . $this->parameterCount;
