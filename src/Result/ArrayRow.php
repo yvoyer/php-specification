@@ -2,10 +2,13 @@
 
 namespace Star\Component\Specification\Result;
 
+use Assert\Assertion;
 use Star\Component\Type\Value;
 use Star\Component\Type\ValueGuesser;
-use Webmozart\Assert\Assert;
+use function array_key_exists;
 use function array_keys;
+use function implode;
+use function sprintf;
 
 final class ArrayRow implements ResultRow
 {
@@ -19,12 +22,12 @@ final class ArrayRow implements ResultRow
      */
     private function __construct(array $row)
     {
-        Assert::allIsInstanceOf(
+        Assertion::allIsInstanceOf(
             $row,
             Value::class,
             'Row must be given a map of "%2$s" indexed by column code, got: "%s".'
         );
-        Assert::allString(
+        Assertion::allString(
             array_keys($row),
             'Row must be given a string index as column identifier, got "%s".'
         );
@@ -33,6 +36,16 @@ final class ArrayRow implements ResultRow
 
     public function getValue(string $column): Value
     {
+        if (!array_key_exists($column, $this->row)) {
+            throw new ColumnNotFound(
+                sprintf(
+                    'Column "%s" was not found in result row. Available columns are "%s".',
+                    $column,
+                    implode(', ', array_keys($this->row))
+                )
+            );
+        }
+
         return $this->row[$column];
     }
 

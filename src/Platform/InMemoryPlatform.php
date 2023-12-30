@@ -2,6 +2,7 @@
 
 namespace Star\Component\Specification\Platform;
 
+use DateTimeInterface;
 use Star\Component\Specification\Result\ArrayResult;
 use Star\Component\Specification\Result\EmptyRow;
 use Star\Component\Specification\Result\NotUniqueResult;
@@ -123,10 +124,34 @@ final class InMemoryPlatform implements SpecificationPlatform
         };
     }
 
+    public function applyGreaterToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            $rowValue = $row->getValue($property);
+            if ($rowValue->isEmpty()) {
+                return false;
+            }
+
+            return $rowValue->toDate() > $value;
+        };
+    }
+
     public function applyGreaterEquals(string $alias, string $property, float $value): void
     {
         $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
             return $row->getValue($property)->toFloat() >= $value;
+        };
+    }
+
+    public function applyGreaterEqualsToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            $rowValue = $row->getValue($property);
+            if ($rowValue->isEmpty()) {
+                return false;
+            }
+
+            return $rowValue->toDate() >= $value;
         };
     }
 
@@ -172,10 +197,34 @@ final class InMemoryPlatform implements SpecificationPlatform
         };
     }
 
+    public function applyLowerToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            $rowValue = $row->getValue($property);
+            if ($rowValue->isEmpty()) {
+                return false;
+            }
+
+            return $rowValue->toDate() < $value;
+        };
+    }
+
     public function applyLowerEquals(string $alias, string $property, float $value): void
     {
         $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
             return $row->getValue($property)->toFloat() <= $value;
+        };
+    }
+
+    public function applyLowerEqualsToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $this->constraints[] = function (ResultRow $row) use ($property, $value): bool {
+            $rowValue = $row->getValue($property);
+            if ($rowValue->isEmpty()) {
+                return false;
+            }
+
+            return $rowValue->toDate() <= $value;
         };
     }
 
@@ -249,7 +298,7 @@ final class InMemoryPlatform implements SpecificationPlatform
                         $weight /= 10;
                     }
 
-                    return $return;
+                    return (int) $return;
                 }
             );
         }

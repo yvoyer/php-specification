@@ -2,6 +2,7 @@
 
 namespace Star\Component\Specification\Platform;
 
+use DateTimeInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -23,6 +24,7 @@ use function var_dump;
 
 final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 {
+    const DATE_FORMAT = 'Y-m-d H:i:s';
     private QueryBuilder $builder;
 
     /**
@@ -152,6 +154,16 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $this->builder->setParameter($parameter, $value);
     }
 
+    public function applyGreaterToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $parameter = $this->generateParameter($property);
+        $this->constraints[] = $this->builder
+            ->expr()
+            ->gt(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+
+        $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
+    }
+
     public function applyGreaterEquals(string $alias, string $property, float $value): void
     {
         $parameter = $this->generateParameter($property);
@@ -160,6 +172,16 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
             ->gte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
+    }
+
+    public function applyGreaterEqualsToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $parameter = $this->generateParameter($property);
+        $this->constraints[] = $this->builder
+            ->expr()
+            ->gte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+
+        $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
     }
 
     public function applyInStrings(string $alias, string $property, string ...$values): void
@@ -216,6 +238,16 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $this->builder->setParameter($parameter, $value);
     }
 
+    public function applyLowerToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $parameter = $this->generateParameter($property);
+        $this->constraints[] = $this->builder
+            ->expr()
+            ->lt(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+
+        $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
+    }
+
     public function applyLowerEquals(string $alias, string $property, float $value): void
     {
         $parameter = $this->generateParameter($property);
@@ -224,6 +256,16 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
             ->lte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
+    }
+
+    public function applyLowerEqualsToDate(string $alias, string $property, DateTimeInterface $value): void
+    {
+        $parameter = $this->generateParameter($property);
+        $this->constraints[] = $this->builder
+            ->expr()
+            ->lte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+
+        $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
     }
 
     public function applyNot(Specification $specification): void

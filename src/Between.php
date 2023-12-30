@@ -2,6 +2,8 @@
 
 namespace Star\Component\Specification;
 
+use DateTimeInterface;
+use Star\Component\Type\DateTimeValue;
 use Star\Component\Type\FloatValue;
 use Star\Component\Type\IntegerValue;
 use Star\Component\Type\Value;
@@ -61,5 +63,17 @@ final class Between implements Specification
         );
     }
 
-    // todo thanDate()
+    public static function dates(
+        string $alias,
+        string $property,
+        DateTimeInterface $leftValue,
+        DateTimeInterface $rightValue
+    ): Specification {
+        return new self(
+            $alias,
+            $property,
+            DateTimeValue::fromDateTime($leftValue),
+            DateTimeValue::fromDateTime($rightValue)
+        );
+    }
 }
