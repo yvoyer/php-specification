@@ -251,14 +251,14 @@ Example:
 ```php
 // equivalent to "name = 'Joe' AND active = true"
 new AndX(
-    EqualsTo::stringValue('alias', 'name', 'Joe')
-    EqualsTo::booleanValue('alias', 'active', true)
+    EqualsTo::stringValue('alias', 'name', 'Joe'),
+    EqualsTo::booleanValue('alias', 'active', true),
 );
 
 // equivalent to "name = 'Joe' OR active = true"
 new OrX(
-    EqualsTo::stringValue('alias', 'name', 'Joe')
-    EqualsTo::booleanValue('alias', 'active', true)
+    EqualsTo::stringValue('alias', 'name', 'Joe'),
+    EqualsTo::booleanValue('alias', 'active', true),
 );
 ```
 
