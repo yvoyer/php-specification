@@ -104,7 +104,10 @@ echo $result->exists(EqualsTo::stringValue('alias', 'name', 'Not found')); // fa
 
 Whether the property's value is matching exactly the provided value (`===`). 
 
-Example: `EqualsTo::stringValue('alias', 'name', 'Joe')`
+Example:
+```php
+EqualsTo::stringValue('alias', 'name', 'Joe');
+```
 
 **Note**: Both values will be converted to a string in order to assert the equality.
 
@@ -112,9 +115,12 @@ Example: `EqualsTo::stringValue('alias', 'name', 'Joe')`
 
 Whether the property's numeric or date value is included between the left and right values.
 
-Example: `Between::integers('alias', 'age', 18, 40)`
+Example:
 
-Example: `Between::dates('alias', 'published_at', new \DateTime('1900-01-01'), new \DateTime('2000-01-01 12:34:56'))`
+```php
+Between::integers('alias', 'age', 18, 40);
+Between::dates('alias', 'published_at', new \DateTime('1900-01-01'), new \DateTime('2000-01-01 12:34:56'));
+```
 
 **Note**: The format `Y-m-d H:i:s` is the only supported format used for comparison.
 
@@ -122,41 +128,63 @@ Example: `Between::dates('alias', 'published_at', new \DateTime('1900-01-01'), n
 
 Whether the provided value is found at any position of the item's property (start, end, middle).
 
-Example: `Contains::string('alias', 'name', 'Joe')`
+Example:
+
+```php
+Contains::string('alias', 'name', 'Joe');
+```
 
 ### EndsWith
 
 Whether the provided value is found at the end of the item's property.
 
-Example: `EndsWith::string('alias', 'name', 'Joe')`
+Example:
+
+```php
+EndsWith::string('alias', 'name', 'Joe');
+```
 
 ### Greater
 
 Whether the property's numeric or date value is greater than the provided value.
 
-Example: `Greater::thanInteger('alias', 'age', 18)`
+Example:
 
-Example: `Greater::thanDate('alias', 'born_at', new \DateTime('2000-01-01'))`
+```php
+Greater::thanInteger('alias', 'age', 18);
+Greater::thanDate('alias', 'born_at', new \DateTime('2000-01-01'));
+```
 
 ### GreaterEquals
 
 Whether the property's numeric or date value is greater or equal than the provided value.
 
-Example: `GreaterEquals::thanInteger('alias', 'age', 18)`
+Example:
 
-Example: `GreaterEquals::thanDate('alias', 'born_at', new \DateTime('2000-01-01'))`
+```php
+GreaterEquals::thanInteger('alias', 'age', 18);
+GreaterEquals::thanDate('alias', 'born_at', new \DateTime('2000-01-01'));
+```
 
 ### InArray
 
 Whether the property's value is contained in the range of provided values.
 
-Example: `InArray::ofIntegers('alias', 'age', 18, 20, 34)` would return items with age 18, 20 or 34.
+Example:
+
+```php
+InArray::ofIntegers('alias', 'age', 18, 20, 34); // would return items with age 18, 20 or 34.
+```
 
 ### IsEmpty
 
 Whether the property's value is an empty value.
 
-Example: `new IsEmpty('alias', 'name')`
+Example:
+
+```php
+new IsEmpty('alias', 'name');
+```
 
 **Note**: Zero, boolean false are considered empty.
 
@@ -164,13 +192,21 @@ Example: `new IsEmpty('alias', 'name')`
 
 Inverse the provided specification.
 
-Example: `new IsNot(Lower::thanInteger('alias', 'age', 18))` would return items with age >= 19.
+Example:
+
+```php
+new IsNot(Lower::thanInteger('alias', 'age', 18)); // would return items with age >= 19.
+```
 
 ### IsNull
 
 Whether the property's value is a null value.
 
-Example: `new IsNull('alias', 'age')`
+Example:
+
+```php
+new IsNull('alias', 'age');
+```
 
 **Note**: Zero, boolean false and empty string are not considered null.
 
@@ -178,23 +214,33 @@ Example: `new IsNull('alias', 'age')`
 
 Whether the property's numeric or date value is less than the provided value.
 
-Example: `Lower::thanInteger('alias', 'age', 18)`
+Example:
 
-Example: `Lower::thanDate('alias', 'age', new \DateTime('2000-01-01'))`
+```php
+Lower::thanInteger('alias', 'age', 18);
+Lower::thanDate('alias', 'age', new \DateTime('2000-01-01'));
+```
 
 ### LowerEquals
 
 Whether the property's numeric or date value is less or equal than the provided value.
 
-Example: `LowerEquals::thanInteger('alias', 'age', 18)`
+Example:
 
-Example: `LowerEquals::thanDate('alias', 'age', new \DateTime('2000-01-01'))`
+```php
+LowerEquals::thanInteger('alias', 'age', 18);
+LowerEquals::thanDate('alias', 'age', new \DateTime('2000-01-01'));
+```
 
 ### StartsWith
 
 Whether the provided value is found at the beginning of the item's property.
 
-Example: `StartsWith::string('alias', 'name', 'Joe')`
+Example:
+
+```php
+StartsWith::string('alias', 'name', 'Joe');
+```
 
 ### Composites (And / Or)
 
