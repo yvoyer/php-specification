@@ -113,6 +113,7 @@ Example: `EqualsTo::stringValue('alias', 'name', 'Joe')`
 Whether the property's numeric or date value is included between the left and right values.
 
 Example: `Between::integers('alias', 'age', 18, 40)`
+
 Example: `Between::dates('alias', 'published_at', new \DateTime('1900-01-01'), new \DateTime('2000-01-01 12:34:56'))`
 
 **Note**: The format `Y-m-d H:i:s` is the only supported format used for comparison.
@@ -134,6 +135,7 @@ Example: `EndsWith::string('alias', 'name', 'Joe')`
 Whether the property's numeric or date value is greater than the provided value.
 
 Example: `Greater::thanInteger('alias', 'age', 18)`
+
 Example: `Greater::thanDate('alias', 'born_at', new \DateTime('2000-01-01'))`
 
 ### GreaterEquals
@@ -141,6 +143,7 @@ Example: `Greater::thanDate('alias', 'born_at', new \DateTime('2000-01-01'))`
 Whether the property's numeric or date value is greater or equal than the provided value.
 
 Example: `GreaterEquals::thanInteger('alias', 'age', 18)`
+
 Example: `GreaterEquals::thanDate('alias', 'born_at', new \DateTime('2000-01-01'))`
 
 ### InArray
@@ -176,6 +179,7 @@ Example: `new IsNull('alias', 'age')`
 Whether the property's numeric or date value is less than the provided value.
 
 Example: `Lower::thanInteger('alias', 'age', 18)`
+
 Example: `Lower::thanDate('alias', 'age', new \DateTime('2000-01-01'))`
 
 ### LowerEquals
@@ -183,6 +187,7 @@ Example: `Lower::thanDate('alias', 'age', new \DateTime('2000-01-01'))`
 Whether the property's numeric or date value is less or equal than the provided value.
 
 Example: `LowerEquals::thanInteger('alias', 'age', 18)`
+
 Example: `LowerEquals::thanDate('alias', 'age', new \DateTime('2000-01-01'))`
 
 ### StartsWith
