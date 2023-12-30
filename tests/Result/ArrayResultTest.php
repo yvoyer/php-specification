@@ -126,7 +126,7 @@ final class ArrayResultTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Row must be given a string index as column identifier, got "integer".'
+            'Row must be given a string index as column identifier, got "123".'
         );
         ArrayResult::fromRowsOfMixed(
             [

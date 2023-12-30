@@ -1,5 +1,7 @@
 # PHP Specification
 
+![Build Status](https://github.com/yvoyer/php-specification/actions/workflows/php.yml/badge.svg)
+
 Specification system for php. Provides adapter for some libraries.
 
 ## Installation

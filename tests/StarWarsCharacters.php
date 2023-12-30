@@ -32,6 +32,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => true,
                 'faction' => 'The Empire',
                 'total_kills' => 66,
+                'died_at' => '2019-12-20 14:23:19',
             ],
             [
                 'id' => self::ID_VADER,
@@ -42,6 +43,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => true,
                 'faction' => 'The Empire',
                 'total_kills' => 34,
+                'died_at' => '1983-05-25 17:35:40',
             ],
             [
                 'id' => self::ID_LEIA,
@@ -52,6 +54,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => true,
                 'faction' => 'The Rebel Alliance',
                 'total_kills' => 12,
+                'died_at' => '2019-12-20 15:45:20',
             ],
             [
                 'id' => self::ID_LUKE,
@@ -62,6 +65,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => true,
                 'faction' => 'The Rebel Alliance',
                 'total_kills' => 34,
+                'died_at' => '2017-12-15 18:12:55',
             ],
             [
                 'id' => self::ID_BOBA,
@@ -72,6 +76,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => false,
                 'faction' => 'Crime Syndicate',
                 'total_kills' => 69,
+                'died_at' => null,
             ],
             [
                 'id' => self::ID_JANGO,
@@ -82,6 +87,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => false,
                 'faction' => 'Crime Syndicate',
                 'total_kills' => 72,
+                'died_at' => '2008-10-08 17:35:40',
             ],
             [
                 'id' => self::ID_STORMTROOPER,
@@ -92,6 +98,7 @@ final class StarWarsCharacters
                 'is_force_sensitive' => false,
                 'faction' => 'The Empire',
                 'total_kills' => 0,
+                'died_at' => '1977-05-25 19:01:22',
             ],
         );
     }

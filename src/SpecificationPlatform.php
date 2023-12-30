@@ -2,6 +2,8 @@
 
 namespace Star\Component\Specification;
 
+use DateTimeInterface;
+
 interface SpecificationPlatform
 {
     /**
@@ -79,10 +81,26 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
+     * @param DateTimeInterface $value
+     * @return void
+     */
+    public function applyGreaterToDate(string $alias, string $property, DateTimeInterface $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
      * @param float $value
      * @return void
      */
     public function applyGreaterEquals(string $alias, string $property, float $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param DateTimeInterface $value
+     * @return void
+     */
+    public function applyGreaterEqualsToDate(string $alias, string $property, DateTimeInterface $value): void;
 
     /**
      * @param string $alias
@@ -133,10 +151,26 @@ interface SpecificationPlatform
     /**
      * @param string $alias
      * @param string $property
+     * @param DateTimeInterface $value
+     * @return void
+     */
+    public function applyLowerToDate(string $alias, string $property, DateTimeInterface $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
      * @param float $value
      * @return void
      */
     public function applyLowerEquals(string $alias, string $property, float $value): void;
+
+    /**
+     * @param string $alias
+     * @param string $property
+     * @param DateTimeInterface $value
+     * @return void
+     */
+    public function applyLowerEqualsToDate(string $alias, string $property, DateTimeInterface $value): void;
 
     /**
      * @param Specification $specification

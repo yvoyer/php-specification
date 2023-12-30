@@ -2,6 +2,7 @@
 
 namespace Star\Component\Specification\Tests\Platform;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Schema;
@@ -73,8 +74,8 @@ final class DoctrineDBALTest extends TestCase
             $this->connection->executeQuery($sql);
         }
 
-        $this->createAuthor(self::SHAKESPEAR, 'William Shakespeare', '', false, '1999-12-31', '1600-01-01');
-        $this->createAuthor(self::TOLKIEN, 'JRR Tolkien', 'tolkien', false, '2000-01-03', '1999-02-03');
+        $this->createAuthor(self::SHAKESPEAR, 'William Shakespeare', '', false, '1999-12-31', '1600-01-01 00:00:00');
+        $this->createAuthor(self::TOLKIEN, 'JRR Tolkien', 'tolkien', false, '2000-01-03', '1999-02-03 00:00:00');
         $this->createAuthor(self::JK, 'JK. Rowling', 'JK', true, '1999-12-30', null);
         $this->createAuthor(self::ROBERT, 'Robert Ludlum', '', true, '2000-01-02', null);
         $this->createAuthor(self::KING, 'Stephen King', 'SK', true, '2000-01-01', null);
@@ -515,5 +516,105 @@ final class DoctrineDBALTest extends TestCase
 
         $row = $platform->fetchOne(EqualsTo::integerValue('a', 'id', 999));
         self::assertTrue($row->isEmpty());
+    }
+
+    public function test_it_should_fetch_rows_with_lower_than_date(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchAll(
+            Lower::thanDate(
+                'a',
+                'archived_at',
+                new DateTimeImmutable('1900-01-01')
+            )
+        );
+        self::assertCount(1, $row);
+        self::assertSame('William Shakespeare', $row->getValue(0, 'name')->toString());
+    }
+
+    public function test_it_should_fetch_rows_with_lower_equal_than_date(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchAll(
+            LowerEquals::thanDate(
+                'a',
+                'archived_at',
+                new DateTimeImmutable('1999-02-03')
+            )
+        );
+        self::assertCount(2, $row);
+        self::assertSame('William Shakespeare', $row->getValue(0, 'name')->toString());
+        self::assertSame('JRR Tolkien', $row->getValue(1, 'name')->toString());
+    }
+
+    public function test_it_should_fetch_rows_with_greater_than_date(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchAll(
+            Greater::thanDate(
+                'a',
+                'archived_at',
+                new DateTimeImmutable('1599-12-31')
+            )
+        );
+        self::assertCount(2, $row);
+        self::assertSame('William Shakespeare', $row->getValue(0, 'name')->toString());
+        self::assertSame('JRR Tolkien', $row->getValue(1, 'name')->toString());
+    }
+
+    public function test_it_should_fetch_rows_with_greater_equal_than_date(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR, 'a');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchAll(
+            GreaterEquals::thanDate(
+                'a',
+                'archived_at',
+                new DateTimeImmutable('1999-02-03 00:00:00')
+            )
+        );
+        self::assertCount(1, $row);
+        self::assertSame('JRR Tolkien', $row->getValue(0, 'name')->toString());
+    }
+
+    public function test_it_should_fetch_rows_with_dates_between(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_POST, 'p');
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $row = $platform->fetchAll(
+            Between::dates(
+                'p',
+                'archived_at',
+                new DateTimeImmutable('1900-00-00'),
+                new DateTimeImmutable('2000-12-31'),
+            )
+        );
+        self::assertCount(3, $row);
+        self::assertSame('Fellowship of the rings', $row->getValue(0, 'title')->toString());
+        self::assertSame('Harry Potter 1', $row->getValue(1, 'title')->toString());
+        self::assertSame('Two towers', $row->getValue(2, 'title')->toString());
     }
 }
