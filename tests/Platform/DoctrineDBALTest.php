@@ -617,4 +617,22 @@ final class DoctrineDBALTest extends TestCase
         self::assertSame('Harry Potter 1', $row->getValue(1, 'title')->toString());
         self::assertSame('Two towers', $row->getValue(2, 'title')->toString());
     }
+
+    public function test_it_should_allow_empty_alias(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR);
+        $platform = new DoctrineDBALPlatform($qb);
+
+        $rows = $platform->fetchAll(
+            EqualsTo::booleanValue('', 'active', true)
+        );
+
+        self::assertCount(3, $rows);
+        self::assertSame('JK. Rowling', $rows->getValue(0, 'name')->toString());
+        self::assertSame('Robert Ludlum', $rows->getValue(1, 'name')->toString());
+        self::assertSame('Stephen King', $rows->getValue(2, 'name')->toString());
+    }
 }
