@@ -89,7 +89,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->like(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->like($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, '%' . $value . '%');
     }
@@ -99,7 +99,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->like(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->like($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, '%' . $value);
     }
@@ -109,7 +109,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->eq(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->eq($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -119,7 +119,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->eq(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->eq($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -129,7 +129,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->eq(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->eq($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -139,7 +139,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->eq(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->eq($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -149,7 +149,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->gt(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->gt($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -159,7 +159,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->gt(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->gt($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
     }
@@ -169,7 +169,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->gte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->gte($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -179,7 +179,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->gte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->gte($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
     }
@@ -189,7 +189,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->in(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->in($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $values, Connection::PARAM_STR_ARRAY);
     }
@@ -199,7 +199,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->in(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->in($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $values, Connection::PARAM_INT_ARRAY);
     }
@@ -209,22 +209,22 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->in(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->in($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $values, Connection::PARAM_STR_ARRAY);
     }
 
     public function applyIsNull(string $alias, string $property): void
     {
-        $this->constraints[] = $this->builder->expr()->isNull((sprintf('%s.%s', $alias, $property)));
+        $this->constraints[] = $this->builder->expr()->isNull(($this->createAlias($alias, $property)));
     }
 
     public function applyIsEmpty(string $alias, string $property): void
     {
         $expr = $this->builder->expr();
         $this->constraints[] = $expr->or(
-            $expr->eq((sprintf('%s.%s', $alias, $property)), $this->builder->expr()->literal('')),
-            $expr->isNull((sprintf('%s.%s', $alias, $property)))
+            $expr->eq(($this->createAlias($alias, $property)), $this->builder->expr()->literal('')),
+            $expr->isNull(($this->createAlias($alias, $property)))
         );
     }
 
@@ -233,7 +233,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->lt(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->lt($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -243,7 +243,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->lt(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->lt($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
     }
@@ -253,7 +253,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->lte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->lte($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value);
     }
@@ -263,7 +263,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->lte(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->lte($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value->format(self::DATE_FORMAT));
     }
@@ -282,12 +282,12 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
 
     public function applyOrderAsc(string $alias, string $property): void
     {
-        $this->builder->addOrderBy(sprintf('%s.%s', $alias, $property), 'ASC');
+        $this->builder->addOrderBy($this->createAlias($alias, $property), 'ASC');
     }
 
     public function applyOrderDesc(string $alias, string $property): void
     {
-        $this->builder->addOrderBy(sprintf('%s.%s', $alias, $property), 'DESC');
+        $this->builder->addOrderBy($this->createAlias($alias, $property), 'DESC');
     }
 
     public function applyStartsWith(string $alias, string $property, string $value): void
@@ -295,7 +295,7 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
         $parameter = $this->generateParameter($property);
         $this->constraints[] = $this->builder
             ->expr()
-            ->like(sprintf('%s.%s', $alias, $property), ':' . $parameter);
+            ->like($this->createAlias($alias, $property), ':' . $parameter);
 
         $this->builder->setParameter($parameter, $value . '%');
     }
@@ -351,5 +351,14 @@ final class DoctrineDBALPlatform implements SpecificationPlatform, Datasource
             $parts = explode(' ', $order);
             $this->builder->addOrderBy($parts[0], $parts[1]);
         }
+    }
+
+    private function createAlias(string $alias, string $property): string
+    {
+        if ($alias === '') {
+            return $property;
+        }
+
+        return sprintf('%s.%s', $alias, $property);
     }
 }
