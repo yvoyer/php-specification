@@ -3,9 +3,13 @@
 namespace Star\Component\Specification\Result;
 
 use Countable;
+use IteratorAggregate;
 use Star\Component\Type\Value;
 
-interface ResultSet extends Countable
+/**
+ * @extends IteratorAggregate<int, ResultRow>
+ */
+interface ResultSet extends Countable, IteratorAggregate
 {
     public function getRow(int $row): ResultRow;
     public function getValue(int $row, string $column): Value;

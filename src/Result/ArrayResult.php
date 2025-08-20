@@ -6,6 +6,7 @@ use Star\Component\Specification\Datasource;
 use Star\Component\Specification\Platform\InMemoryPlatform;
 use Star\Component\Specification\Specification;
 use Star\Component\Type\Value;
+use Traversable;
 use function array_key_exists;
 use function array_map;
 
@@ -67,6 +68,13 @@ final class ArrayResult implements ResultSet, Datasource
     public function isEmpty(): bool
     {
         return $this->count() === 0;
+    }
+
+    public function getIterator(): Traversable
+    {
+        foreach ($this->rows as $row) {
+            yield $row;
+        }
     }
 
     /**

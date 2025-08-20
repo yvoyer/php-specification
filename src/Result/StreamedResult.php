@@ -3,6 +3,7 @@
 namespace Star\Component\Specification\Result;
 
 use Star\Component\Type\Value;
+use Traversable;
 
 final class StreamedResult implements ResultSet
 {
@@ -22,6 +23,11 @@ final class StreamedResult implements ResultSet
     }
 
     public function isEmpty(): bool
+    {
+        throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
+    }
+
+    public function getIterator(): Traversable
     {
         throw new \RuntimeException(__METHOD__ . ' not implemented yet.');
     }
