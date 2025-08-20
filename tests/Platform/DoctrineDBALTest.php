@@ -21,10 +21,13 @@ use Star\Component\Specification\IsNot;
 use Star\Component\Specification\IsNull;
 use Star\Component\Specification\Lower;
 use Star\Component\Specification\LowerEquals;
+use Star\Component\Specification\NullSpecification;
 use Star\Component\Specification\OrderBy;
 use Star\Component\Specification\OrX;
 use Star\Component\Specification\Platform\DoctrineDBALPlatform;
+use Star\Component\Specification\Result\ResultRow;
 use Star\Component\Specification\StartsWith;
+use function iterator_to_array;
 
 final class DoctrineDBALTest extends TestCase
 {
@@ -634,5 +637,26 @@ final class DoctrineDBALTest extends TestCase
         self::assertSame('JK. Rowling', $rows->getValue(0, 'name')->toString());
         self::assertSame('Robert Ludlum', $rows->getValue(1, 'name')->toString());
         self::assertSame('Stephen King', $rows->getValue(2, 'name')->toString());
+    }
+
+    public function test_it_should_iterate_on_result(): void
+    {
+        $qb = $this->connection->createQueryBuilder();
+        $qb
+            ->select('*')
+            ->from(self::TABLE_AUTHOR);
+        $platform = new DoctrineDBALPlatform($qb);
+
+        /**
+         * @var ResultRow[] $rows
+         */
+        $rows = iterator_to_array($platform->fetchAll(new NullSpecification()));
+
+        self::assertCount(5, $rows);
+        self::assertSame('William Shakespeare', $rows[0]->getValue('name')->toString());
+        self::assertSame('JRR Tolkien', $rows[1]->getValue('name')->toString());
+        self::assertSame('JK. Rowling', $rows[2]->getValue('name')->toString());
+        self::assertSame('Robert Ludlum', $rows[3]->getValue('name')->toString());
+        self::assertSame('Stephen King', $rows[4]->getValue('name')->toString());
     }
 }

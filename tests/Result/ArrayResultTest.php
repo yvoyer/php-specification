@@ -8,6 +8,7 @@ use Star\Component\Specification\Result\ArrayResult;
 use PHPUnit\Framework\TestCase;
 use Star\Component\Specification\Result\NotUniqueResult;
 use Star\Component\Type\Value;
+use function iterator_to_array;
 
 final class ArrayResultTest extends TestCase
 {
@@ -155,5 +156,22 @@ final class ArrayResultTest extends TestCase
         $this->expectException(NotUniqueResult::class);
         $this->expectExceptionMessage('Query was expected to return 0-1 row, "2" rows returned.');
         $result->fetchOne(EqualsTo::booleanValue('alias', 'is_active', true));
+    }
+
+    public function test_it_should_be_iterator(): void
+    {
+        $result = ArrayResult::fromRowsOfMixed(
+            [
+                'id' => 1,
+            ],
+            [
+                'id' => 2,
+            ],
+            [
+                'id' => 3,
+            ],
+        );
+        $rows = iterator_to_array($result);
+        self::assertCount(3, $rows);
     }
 }
